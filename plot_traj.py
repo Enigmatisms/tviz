@@ -1,14 +1,16 @@
 """
     轨迹绘制以及 evaluation
 """
-from operator import le
+from crypt import methods
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 from sys import argv
 from evals import chamferDistanceEval
 
-colors = ((1.0, 0, 0), (0, 0.5, 0), (0, 0, 1.0))
-methods = ("GMapping ", "GT ", "Chain SLAM ")
+colors = ((1.0, 0, 0), (0, 0.5, 0), (0, 0, 1.0), (0.3, 0.3, 0.3))
+# methods = ("Chain SLAM ", "GMapping ", "Cartographer ", "GT ")
+methods = []
 attributes = ("X axis", "Y axis", "Rotation")
 
 # 时间戳并不能完全对应
@@ -68,18 +70,39 @@ def gtChamferDist(pts1, pts2):
 def showTrajectories(map_name):
     cslam_traj = readFromFile(map_name + "c_traj.txt")
     cslam_gt = readFromFile(map_name + "c_gt.txt")
-    gmap_traj = readFromFile(map_name + "gmap_traj.txt")
-    gmap_gt = readFromFile(map_name + "gmap_gt.txt")
-
-    all_data = (gmap_traj, cslam_gt, cslam_traj)
-    print("GMapping trajectory evaluation:")
-    for dim in range(3):
-        print("Dimension %s error: %f"%(attributes[dim], chamferDistanceEval(gmap_traj, gmap_gt, dim + 1)))
-    print("Point wise chamfer distance: %f"%(chamferDistanceEval(gmap_traj, gmap_gt, -1)))
     print("CSLAM trajectory evaluation:")
     for dim in range(3):
         print("Dimension %s error: %f"%(attributes[dim], chamferDistanceEval(cslam_traj, cslam_gt, dim + 1)))
     print("Point wise chamfer distance: %f"%(chamferDistanceEval(cslam_traj, cslam_gt, -1)))
+    print(" ===================================================")
+    all_data = [cslam_traj]
+    methods.append("Chain SLAM ")
+    if os.path.exists(map_name + "gmap_traj.txt"):
+        gmap_traj = readFromFile(map_name + "gmap_traj.txt")
+        print("GMapping trajectory evaluation:")
+        for dim in range(3):
+            print("Dimension %s error: %f"%(attributes[dim], chamferDistanceEval(gmap_traj, cslam_gt, dim + 1)))
+        print("Point wise chamfer distance: %f"%(chamferDistanceEval(gmap_traj, cslam_gt, -1)))
+        methods.append("GMapping ")
+        all_data.append(gmap_traj)
+        print(" =================================================== ")
+    if os.path.exists(map_name + "carto_traj_0.txt"):
+        carto_traj = readFromFile(map_name + "carto_traj_0.txt")
+        print("Cartographer trajectory evaluation:")
+        for dim in range(3):
+            print("Dimension %s error: %f"%(attributes[dim], chamferDistanceEval(carto_traj, cslam_gt, dim + 1)))
+        print("Point wise chamfer distance: %f"%(chamferDistanceEval(carto_traj, cslam_gt, -1)))
+        methods.append("Cartographer ")
+        all_data.append(carto_traj)
+        print(" =================================================== ")
+
+    methods.append("GT ")
+    all_data.append(cslam_gt)
+
+    # all_data = (gmap_traj, cslam_gt, cslam_traj)
+    # print("GMapping trajectory evaluation:")
+    # for dim in range(3):
+    #     print("Dimension %s error: %f"%(attributes[dim], chamferDistanceEval(gmap_traj, gmap_gt, dim + 1)))
     plt.figure(0)
     plotTrajDimWise(all_data, False)
     plt.figure(1)

@@ -1,2 +1,7 @@
-map*/
-__pycache__/
+*.*
+!*.cc
+!*.sh
+!*.py
+!*.md
+!.gitignore
+!LICENSE

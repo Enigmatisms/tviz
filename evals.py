@@ -42,7 +42,7 @@ def singleValueEval(query:float, dim:int, key_num:int, all_keys:list, traj_eval:
         st2 = all_keys[k_id, 0]      # 时间戳
         return linearInterp(query, st, st2, all_keys[k_id - 1, dim], all_keys[k_id, dim])
 
-def chamferDistanceEval(data:np.ndarray, gt:np.ndarray, dim:int = 0, sqr:bool = False, single_side:bool = False)->float:
+def chamferDistanceEval(data:np.ndarray, gt:np.ndarray, dim:int = 0, sqr:bool = False, single_side:bool = True)->float:
     """
         #### Chamfer 距离：基于时间戳二分查找的轨迹 或 单一维度误差metrics计算
         ---
