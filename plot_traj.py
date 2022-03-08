@@ -36,8 +36,8 @@ def readFromFile(path:str)->np.array:
 def plotTrajectory(data:tuple, show = True):
     method_num = len(data)
     for i in range(method_num):
-        plt.plot(data[i][:, 1], data[i][:, 2], color = colors[i], label = methods[i] + 'trajectory')
-        plt.scatter(data[i][:, 1], data[i][:, 2], color = colors[i], s = 6)
+        plt.plot(data[i][:, 1], data[i][:, 2], color = colors[i], label = methods[i] + 'trajectory', linewidth = 0.5)
+        plt.scatter(data[i][:, 1], data[i][:, 2], color = colors[i], s = 1)
     plt.title('Top down orthogonal trajectories')
     plt.grid(axis = 'both')
     plt.legend()
@@ -99,10 +99,6 @@ def showTrajectories(map_name):
     methods.append("GT ")
     all_data.append(cslam_gt)
 
-    # all_data = (gmap_traj, cslam_gt, cslam_traj)
-    # print("GMapping trajectory evaluation:")
-    # for dim in range(3):
-    #     print("Dimension %s error: %f"%(attributes[dim], chamferDistanceEval(gmap_traj, gmap_gt, dim + 1)))
     plt.figure(0)
     plotTrajDimWise(all_data, False)
     plt.figure(1)
